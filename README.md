@@ -32,7 +32,7 @@ git clone https://github.com/estipollak/Downscaling-Near-Surface-Air-Temperature
 
 2. Navigate to the project directory:
 ```bash
-cd yourproject
+cd Downscaling-Near-Surface-Air-Temperature
 ```
 3. Copy data [from Google Drive](https://drive.google.com/drive/folders/1fJq7GHRrrf9pk9E-lTuWwubY_5LrWO2m?usp=sharing) to the data\ERA5 folder.
 
