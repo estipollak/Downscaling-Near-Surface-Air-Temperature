@@ -32,7 +32,7 @@ git clone https://github.com/estipollak/Downscaling-Near-Surface-Air-Temperature
 
 2. Navigate to the project directory:
 ```bash
-cd Downscaling-Near-Surface-Air-Temperature.git
+cd Downscaling-Near-Surface-Air-Temperature
 ```
 
 3.Install required Python packages:
