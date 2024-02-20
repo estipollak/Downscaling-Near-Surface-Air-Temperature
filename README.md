@@ -72,4 +72,5 @@ In the `Output` folder of this repository, you can find example results generate
 ## References
 For more details, please refer to the article:
 
-[Comparing ML Methods for Downscaling Near-Surface Air Temperature over the Eastern Mediterranean]([https://example.com/path/to/article.pdf](https://github.com/estipollak/Downscaling-Near-Surface-Air-Temperature/tree/master/Article)https://github.com/estipollak/Downscaling-Near-Surface-Air-Temperature/tree/master/Article)
+Comparing ML Methods for Downscaling Near-Surface Air Temperature over the Eastern Mediterranean](https://github.com/estipollak/Downscaling-Near-Surface-Air-Temperature/tree/master/Article)
+
