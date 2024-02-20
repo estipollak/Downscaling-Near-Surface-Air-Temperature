@@ -4,9 +4,9 @@
 ## Description
 This project aims to downscale near-surface air temperature (Ta) predictions from global climate models to finer spatial resolutions using machine learning techniques. By leveraging a diverse set of features, including satellite data, climate model outputs, and digital elevation models, we develop accurate machine learning models to provide high-resolution Ta data for climate studies.
 
-This code is based on the article:
+**This code is based on the article:**
 "Comparing ML Methods for Downscaling Near-Surface Air Temperature over the Eastern Mediterranean"
-Authors: Amit Blizer, Oren Glickman, and Itamar M Lensky
+**Authors:** Amit Blizer, Oren Glickman, and Itamar M Lensky
 
 **Please cite the above article when using this code for your own research or projects.**
 
@@ -72,5 +72,5 @@ In the `Output` folder of this repository, you can find example results generate
 ## References
 For more details, please refer to the article:
 
-Comparing ML Methods for Downscaling Near-Surface Air Temperature over the Eastern Mediterranean](https://github.com/estipollak/Downscaling-Near-Surface-Air-Temperature/tree/master/Article)
+[Comparing ML Methods for Downscaling Near-Surface Air Temperature over the Eastern Mediterranean](https://github.com/estipollak/Downscaling-Near-Surface-Air-Temperature/tree/master/Article)
 
