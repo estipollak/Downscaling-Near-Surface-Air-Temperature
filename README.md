@@ -7,6 +7,7 @@ This project aims to downscale near-surface air temperature (Ta) predictions fro
 This code is based on the article:
 "Comparing ML Methods for Downscaling Near-Surface Air Temperature over the Eastern Mediterranean"
 Authors: Amit Blizer, Oren Glickman, and Itamar M Lensky
+
 **Please cite the above article when using this code for your own research or projects.**
 
 
