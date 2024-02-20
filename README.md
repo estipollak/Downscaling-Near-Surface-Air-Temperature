@@ -7,7 +7,6 @@ This project aims to downscale near-surface air temperature (Ta) predictions fro
 This Github is based on code that was part of the study: "Comparing ML Methods for Downscaling Near-Surface Air Temperature over the Eastern Mediterranean", that was carried out by Amit Blizer, Oren Glickman, and Itamar M Lensky
 Please cite the above article when using this code for your own research or projects.
 
-**Please cite the above article when using this code for your own research or projects.**
 
 
 ## Project Structure
