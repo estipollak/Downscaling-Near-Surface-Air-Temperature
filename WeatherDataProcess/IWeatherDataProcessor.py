@@ -1,5 +1,4 @@
 from zope.interface import Interface, Attribute
-import pandas as pd
 
 from LoadAndProcess.IDataLoader import IDataLoader
 from LoadAndProcess.IDataPreprocessor import IDataPreprocessor
@@ -31,20 +30,22 @@ class IWeatherDataProcessor(Interface):
         """
         pass
 
-    def run_logo_nn(self, output_path: str) -> None:
+    def run_logo_nn(self, is_hourly_data: bool, output_path: str) -> None:
         """
         Run Leave-One-Group-Out cross-validation for neural network model on weather data.
 
         Args:
+            is_hourly_data (bool): Indicates whether the calculations are on ERA5 daily/hourly data.
             output_path (str): Path to save output.
         """
         pass
 
-    def run_logo_xgb(self, output_path: str) -> None:
+    def run_logo_xgb(self, is_hourly_data: bool, output_path: str) -> None:
         """
         Run Leave-One-Group-Out cross-validation for XGBoost model on weather data.
 
         Args:
+            is_hourly_data (bool): Indicates whether the calculations are on ERA5 daily/hourly data.
             output_path (str): Path to save output.
         """
         pass

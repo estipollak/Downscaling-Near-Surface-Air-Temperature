@@ -11,9 +11,12 @@ class IDataLoader(Interface):
     """
     __data_preprocessor: IDataPreprocessor = Attribute("An attribute indicating the data preprocessor object")
 
-    def preprocessing(self) -> [pd.DataFrame, pd.DataFrame]:
+    def preprocessing(self, is_hourly_data: bool) -> [pd.DataFrame, pd.DataFrame]:
         """
         Method for data preprocessing.
+
+        Args:
+            is_hourly_data (bool): Indicates whether the calculations are on daily/hourly data.
 
         Returns:
             [pd.DataFrame, pd.DataFrame]: A tuple containing two Pandas DataFrames.

@@ -23,16 +23,19 @@ class DataLoader:
         """
         self.__data_preprocessor = data_preprocessor
 
-    def preprocessing(self) -> [pd.DataFrame, pd.DataFrame]:
+    def preprocessing(self, is_hourly_data: bool) -> [pd.DataFrame, pd.DataFrame]:
         """
         Method for data preprocessing.
+
+        Args:
+            is_hourly_data (bool): Indicates whether the calculations are on daily/hourly data.
 
         Returns:
             [pd.DataFrame, pd.DataFrame]: A tuple containing two Pandas DataFrames.
                 The first DataFrame represents the Datasets for running,
                 and the second DataFrame represents the Datasets for LOGO cross-validation.
         """
-        return self.__data_preprocessor.process()
+        return self.__data_preprocessor.process(is_hourly_data)
 
     def split_data(self, X: pd.DataFrame, Y: pd.DataFrame, test_size, random_state) -> [np.ndarray, np.ndarray,
                                                                                         np.ndarray, np.ndarray]:

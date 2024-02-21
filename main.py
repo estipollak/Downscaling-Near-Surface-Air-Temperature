@@ -1,6 +1,6 @@
 import os
 from ProjectEnums import PossibleActions
-from WeatherDataProcess.ERA5HourlyProcessor import ERA5HourlyProcessor
+from WeatherDataProcess.ERA5Processor import ERA5Processor
 
 
 def create_output_path(requested_action: PossibleActions) -> str:
@@ -22,40 +22,103 @@ def create_output_path(requested_action: PossibleActions) -> str:
     return created_path
 
 
+def is_ERA5(requested_action: PossibleActions) -> bool:
+    """
+    Determines whether the requested action corresponds to ERA5 data processing.
+
+    Args:
+        requested_action (PossibleActions): The requested action to be performed.
+
+    Returns:
+        bool: True if the requested action corresponds to ERA5 data processing,
+              False otherwise.
+    """
+    return requested_action == PossibleActions.ERA5_Hourly_XGB_RUN or \
+        requested_action == PossibleActions.ERA5_Hourly_XGB_LOGO or \
+        requested_action == PossibleActions.ERA5_Hourly_NN_RUN or \
+        requested_action == PossibleActions.ERA5_Hourly_NN_LOGO or \
+        requested_action == PossibleActions.ERA5_Daily_XGB_RUN or \
+        requested_action == PossibleActions.ERA5_Daily_XGB_LOGO or \
+        requested_action == PossibleActions.ERA5_Daily_NN_RUN or \
+        requested_action == PossibleActions.ERA5_Daily_NN_LOGO  #
+
+
+def is_hourly(requested_action: PossibleActions) -> bool:
+    """
+    Determines whether the requested action corresponds to hourly data processing.
+
+    Args:
+        requested_action (PossibleActions): The requested action to be performed.
+
+    Returns:
+        bool: True if the requested action corresponds to processing hourly data,
+              False otherwise.
+    """
+
+    return requested_action == PossibleActions.ERA5_Hourly_XGB_RUN or \
+        requested_action == PossibleActions.ERA5_Hourly_XGB_LOGO or \
+        requested_action == PossibleActions.ERA5_Hourly_NN_RUN or \
+        requested_action == PossibleActions.ERA5_Hourly_NN_LOGO
+
+
 def run_requested_action(requested_action: PossibleActions):
     """
     Run the requested action.
 
     Parameters:
         requested_action (PossibleActions): The requested action.
-
     """
-    a = ERA5HourlyProcessor()
-    output_path = create_output_path(requested_action)
-    a.print_result_of_reference()
+    # Check if the requested action involves ERA5 data processing
+    if is_ERA5(requested_action):
 
-    if requested_action == PossibleActions.ERA5_XGB_RUN:
-        a.run_xgb(output_path)
+        # Determine if the ERA5 data is hourly or daily
+        is_hourly_data = is_hourly(requested_action)
 
-    elif requested_action == PossibleActions.ERA5_XGB_LOGO:
-        a.run_logo_xgb(output_path)
+        # Initialize an ERA5Processor instance based on the data resolution
+        ERA5_processor = ERA5Processor(is_hourly_data)
 
-    elif requested_action == PossibleActions.ERA5_NN_RUN:
-        a.run_nn()
+        # Create an output path based on the requested action
+        output_path = create_output_path(requested_action)
 
-    elif requested_action == PossibleActions.ERA5_NN_LOGO:
-        a.run_logo_nn(output_path)
+        # Print the result of the reference
+        ERA5_processor.print_result_of_reference()
+
+        # Execute the appropriate action based on the requested action
+
+        if requested_action == PossibleActions.ERA5_Hourly_XGB_RUN or requested_action == PossibleActions.ERA5_Daily_XGB_RUN:
+            # Run XGB model training
+            ERA5_processor.run_xgb(output_path)
+
+        elif requested_action == PossibleActions.ERA5_Hourly_XGB_LOGO or requested_action == PossibleActions.ERA5_Daily_XGB_LOGO:
+            # Run XGB model training with LOGO cross-validation
+            ERA5_processor.run_logo_xgb(is_hourly_data, output_path)
+
+        elif requested_action == PossibleActions.ERA5_Hourly_NN_RUN or requested_action == PossibleActions.ERA5_Daily_NN_RUN:
+            # Run neural network model training
+            ERA5_processor.run_nn()
+
+        elif requested_action == PossibleActions.ERA5_Hourly_NN_LOGO or requested_action == PossibleActions.ERA5_Daily_NN_LOGO:
+            # Run neural network model training with LOGO cross-validation
+            ERA5_processor.run_logo_nn(is_hourly_data, output_path)
 
 
 def main():
     """
-       Main function to prompt user input and execute requested action.
+    Main function to prompt user input and execute requested action.
     """
     print(
-        "Enter 0 for ERA5_XGB_RUN \n Enter 1 for ERA5_XGB_LOGO \n Enter 2 for ERA5_NN_RUN \n Enter 3 for ERA5_NN_LOGO \n ")
+        "Enter 0 for ERA5_Hourly_XGB_RUN \n"
+        "Enter 1 for ERA5_Hourly_XGB_LOGO \n"
+        "Enter 2 for ERA5_Hourly_NN_RUN \n"
+        "Enter 3 for ERA5_Hourly_NN_LOGO \n"
+        "Enter 4 for ERA5_Daily_XGB_RUN \n"
+        "Enter 5 for ERA5_Daily_XGB_LOGO \n"
+        "Enter 6 for ERA5_Daily_NN_RUN \n"
+        "Enter 7 for ERA5_Daily_NN_LOGO \n"
+    )
 
     number = int(input())
-    if number < 0 or number > 3:
+    if number < 0 or number > 7:
         print('Invalid input')
         return
     requested_action = list(PossibleActions)[number]

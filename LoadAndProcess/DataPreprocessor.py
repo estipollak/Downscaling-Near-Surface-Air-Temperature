@@ -15,47 +15,47 @@ from LoadAndProcess.IDataPreprocessor import IDataPreprocessor
 
 @implementer(IDataPreprocessor)
 class DataPreprocessor:
-    def process(self) -> [pd.DataFrame, pd.DataFrame]:
-        project_path = os.path.join(os.getcwd(),'data\ERA5')
+    def process(self, is_hourly_data: bool) -> [pd.DataFrame, pd.DataFrame]:
 
+        project_path = os.path.join(os.getcwd(), 'data\ERA5')
 
         # Import NetCDF ERA5 T2T 2015-2019 (5 years) 9*9 KM
-        df13_2015_2019 = xr.open_dataset(os.path.join(project_path,'2015_2019.nc'))
+        df13_2015_2019 = xr.open_dataset(os.path.join(project_path, '2015_2019.nc'))
 
         # Import NetCDF ERA5 Solar Radiation data 2015-2019 (5 years) 9*9 KM
         Surface_net_solar_radiation = xr.open_dataset(
-            os.path.join(project_path,'Surface_net_solar_radiation_2002_2021.nc'))
+            os.path.join(project_path, 'Surface_net_solar_radiation_2002_2021.nc'))
         Surface_net_thermal_radiation = xr.open_dataset(
-            os.path.join(project_path,'Surface_net_thermal_radiation_2002_2021.nc'))
+            os.path.join(project_path, 'Surface_net_thermal_radiation_2002_2021.nc'))
         surface_solar_radiation_downwards = xr.open_dataset(
-            os.path.join(project_path,'surface_solar_radiation_downwards_2002_2021.nc'))
+            os.path.join(project_path, 'surface_solar_radiation_downwards_2002_2021.nc'))
         Surface_thermal_radiation_downwards = xr.open_dataset(
-            os.path.join(project_path,'Surface_thermal_radiation_downwards_2002_2021.nc'))
+            os.path.join(project_path, 'Surface_thermal_radiation_downwards_2002_2021.nc'))
 
         # Import NetCDF ERA5 Wind data 2015-2019 (5 years) 9*9KM
-        Wind_2015_2017 = xr.open_dataset(os.path.join(project_path,'Wind_2015_2017.nc'))
-        Wind_2018_2020 = xr.open_dataset(os.path.join(project_path,'Wind_2018_2020.nc'))
+        Wind_2015_2017 = xr.open_dataset(os.path.join(project_path, 'Wind_2015_2017.nc'))
+        Wind_2018_2020 = xr.open_dataset(os.path.join(project_path, 'Wind_2018_2020.nc'))
 
         # Import NetCDF MODIS LST data
-        Modis_2014 = xr.open_dataset(os.path.join(project_path,'LST_2014_NetCDF.nc')).drop(band=['1,2,4'])
-        Modis_2015 = xr.open_dataset(os.path.join(project_path,'LST_2015_NetCDF.nc')).drop(band=['1,2,4'])
-        Modis_2016 = xr.open_dataset(os.path.join(project_path,'LST_2016_NetCDF.nc')).drop(band=['1,2,4'])
-        Modis_2017 = xr.open_dataset(os.path.join(project_path,'LST_2017_NetCDF.nc')).drop(band=['1,2,4'])
-        Modis_2018 = xr.open_dataset(os.path.join(project_path,'LST_2018_NetCDF.nc')).drop(band=['1,2,4'])
-        Modis_2019 = xr.open_dataset(os.path.join(project_path,'LST_2019_NetCDF.nc')).drop(band=['1,2,4'])
-        Modis_2020 = xr.open_dataset(os.path.join(project_path,'LST_2020_NetCDF.nc')).drop(band=['1,2,4'])
+        Modis_2014 = xr.open_dataset(os.path.join(project_path, 'LST_2014_NetCDF.nc')).drop(band=['1,2,4'])
+        Modis_2015 = xr.open_dataset(os.path.join(project_path, 'LST_2015_NetCDF.nc')).drop(band=['1,2,4'])
+        Modis_2016 = xr.open_dataset(os.path.join(project_path, 'LST_2016_NetCDF.nc')).drop(band=['1,2,4'])
+        Modis_2017 = xr.open_dataset(os.path.join(project_path, 'LST_2017_NetCDF.nc')).drop(band=['1,2,4'])
+        Modis_2018 = xr.open_dataset(os.path.join(project_path, 'LST_2018_NetCDF.nc')).drop(band=['1,2,4'])
+        Modis_2019 = xr.open_dataset(os.path.join(project_path, 'LST_2019_NetCDF.nc')).drop(band=['1,2,4'])
+        Modis_2020 = xr.open_dataset(os.path.join(project_path, 'LST_2020_NetCDF.nc')).drop(band=['1,2,4'])
 
-        dataframe_stations = pd.read_csv(os.path.join(project_path,'All_Staions_Locations.csv'))
+        dataframe_stations = pd.read_csv(os.path.join(project_path, 'All_Staions_Locations.csv'))
 
         # mport MOAG staions data
 
-        Agri_20032008 = pd.read_csv(os.path.join(project_path,'Agri_Stations_2003_2008.csv'), parse_dates=True,
+        Agri_20032008 = pd.read_csv(os.path.join(project_path, 'Agri_Stations_2003_2008.csv'), parse_dates=True,
                                     dayfirst=True, skiprows=[1, 2], low_memory=False, index_col='Date & Time')
-        Agri_20092014 = pd.read_csv(os.path.join(project_path,'Agri_Stations_2008_2014.csv'), parse_dates=True,
+        Agri_20092014 = pd.read_csv(os.path.join(project_path, 'Agri_Stations_2008_2014.csv'), parse_dates=True,
                                     dayfirst=True, skiprows=[1, 2], low_memory=False, index_col='Date & Time')
-        Agri_20152023 = pd.read_csv(os.path.join(project_path,'Agri_Stations_2015_2023.csv'), parse_dates=True,
+        Agri_20152023 = pd.read_csv(os.path.join(project_path, 'Agri_Stations_2015_2023.csv'), parse_dates=True,
                                     dayfirst=True, skiprows=[1, 2], low_memory=False, index_col='Date & Time')
-        Agri_locations = pd.read_csv(os.path.join(project_path,'agri_locations.csv'))
+        Agri_locations = pd.read_csv(os.path.join(project_path, 'agri_locations.csv'))
 
         Agri_locations.drop(columns=['x', 'y'], inplace=True)
         Agri_locations.rename(columns={'Longtitude': 'x', 'Latitude': 'y'}, inplace=True)
@@ -121,8 +121,8 @@ class DataPreprocessor:
                 df_list.append(sliced)
         full_df_AGRI = pd.concat(df_list, axis=0, ignore_index=True)
 
-        #Loading the corrected matrix into geoDataFrame
-        ERA5_DF_with_Geometry = pd.read_csv(os.path.join(project_path,'Zonal_Stat_results.csv'))
+        # Loading the corrected matrix into geoDataFrame
+        ERA5_DF_with_Geometry = pd.read_csv(os.path.join(project_path, 'Zonal_Stat_results.csv'))
         ERA5_DF_with_Geometry['geometry_x'] = ERA5_DF_with_Geometry['geometry_x'].apply(wkt.loads)
         ERA5_DF_with_Geometry['Origin_Geo_poly'] = ERA5_DF_with_Geometry['Origin_Geo_poly'].apply(wkt.loads)
         ERA5_DF_with_Geometry['Geometry_ERA5_Poly'] = ERA5_DF_with_Geometry['Geometry_ERA5_Poly'].apply(wkt.loads)
@@ -239,59 +239,58 @@ class DataPreprocessor:
         Combined_nc_wind_df['Wind_Speed'] = (np.power(Combined_nc_wind_df['v10'], 2) + np.power(
             Combined_nc_wind_df['u10'], 2)) ** (1 / 2)
         Combined_nc_wind_df['Wind_Direction'] = np.arctan2(Combined_nc_wind_df['v10'], Combined_nc_wind_df['u10']) * (
-                    180 / np.pi)
+                180 / np.pi)
 
         # Filter LST NetCDF files based on Target XY points (Automatic adding the weather stations ID) and save to parquet localy (to save time)
 
-        if not os.path.exists(os.path.join(project_path,'Modis_parquet_files')):
-            os.makedirs(os.path.join(project_path,'Modis_parquet_files'))
-
+        if not os.path.exists(os.path.join(project_path, 'Modis_parquet_files')):
+            os.makedirs(os.path.join(project_path, 'Modis_parquet_files'))
 
         Modis_2014 = Modis_2014.sel(x=target_lon, y=target_lat, method='nearest')
         df_Modis_2014 = Modis_2014.to_dataframe().reset_index()
         df_Modis_2014.rename(columns={'__xarray_dataarray_variable__': 'ContLST_Daily'}, inplace=True)
         df_Modis_2014 = df_Modis_2014[df_Modis_2014['band'] == 2]
-        df_Modis_2014.to_parquet(os.path.join(project_path,'Modis_parquet_files\df_Modis_2014.parquet'))
+        df_Modis_2014.to_parquet(os.path.join(project_path, 'Modis_parquet_files\df_Modis_2014.parquet'))
 
         Modis_2015 = Modis_2015.sel(x=target_lon, y=target_lat, method='nearest')
         df_Modis_2015 = Modis_2015.to_dataframe().reset_index()
         df_Modis_2015.rename(columns={'__xarray_dataarray_variable__': 'ContLST_Daily'}, inplace=True)
         df_Modis_2015 = df_Modis_2015[df_Modis_2015['band'] == 2]
-        df_Modis_2015.to_parquet(os.path.join(project_path,'Modis_parquet_files\df_Modis_2015.parquet'))
+        df_Modis_2015.to_parquet(os.path.join(project_path, 'Modis_parquet_files\df_Modis_2015.parquet'))
 
         Modis_2016 = Modis_2016.sel(x=target_lon, y=target_lat, method='nearest')
         df_Modis_2016 = Modis_2016.to_dataframe().reset_index()
         df_Modis_2016.rename(columns={'__xarray_dataarray_variable__': 'ContLST_Daily'}, inplace=True)
         df_Modis_2016 = df_Modis_2016[df_Modis_2016['band'] == 2]
-        df_Modis_2016.to_parquet(os.path.join(project_path,'Modis_parquet_files\df_Modis_2016.parquet'))
+        df_Modis_2016.to_parquet(os.path.join(project_path, 'Modis_parquet_files\df_Modis_2016.parquet'))
 
         Modis_2017 = Modis_2017.sel(x=target_lon, y=target_lat, method='nearest')
         df_Modis_2017 = Modis_2017.to_dataframe().reset_index()
         df_Modis_2017.rename(columns={'__xarray_dataarray_variable__': 'ContLST_Daily'}, inplace=True)
         df_Modis_2017 = df_Modis_2017[df_Modis_2017['band'] == 2]
-        df_Modis_2017.to_parquet(os.path.join(project_path,'Modis_parquet_files\df_Modis_2017.parquet'))
+        df_Modis_2017.to_parquet(os.path.join(project_path, 'Modis_parquet_files\df_Modis_2017.parquet'))
 
         Modis_2018 = Modis_2018.sel(x=target_lon, y=target_lat, method='nearest')
         df_Modis_2018 = Modis_2018.to_dataframe().reset_index()
         df_Modis_2018.rename(columns={'__xarray_dataarray_variable__': 'ContLST_Daily'}, inplace=True)
         df_Modis_2018 = df_Modis_2018[df_Modis_2018['band'] == 2]
-        df_Modis_2018.to_parquet(os.path.join(project_path,'Modis_parquet_files\df_Modis_2018.parquet'))
+        df_Modis_2018.to_parquet(os.path.join(project_path, 'Modis_parquet_files\df_Modis_2018.parquet'))
 
         Modis_2019 = Modis_2019.sel(x=target_lon, y=target_lat, method='nearest')
         df_Modis_2019 = Modis_2019.to_dataframe().reset_index()
         df_Modis_2019.rename(columns={'__xarray_dataarray_variable__': 'ContLST_Daily'}, inplace=True)
         df_Modis_2019 = df_Modis_2019[df_Modis_2019['band'] == 2]
-        df_Modis_2019.to_parquet(os.path.join(project_path,'Modis_parquet_files\df_Modis_2019.parquet'))
+        df_Modis_2019.to_parquet(os.path.join(project_path, 'Modis_parquet_files\df_Modis_2019.parquet'))
 
         Modis_2020 = Modis_2020.sel(x=target_lon, y=target_lat, method='nearest')
         df_Modis_2020 = Modis_2020.to_dataframe().reset_index()
         df_Modis_2020.rename(columns={'__xarray_dataarray_variable__': 'ContLST_Daily'}, inplace=True)
         df_Modis_2020 = df_Modis_2020[df_Modis_2020['band'] == 2]
-        df_Modis_2020.to_parquet(os.path.join(project_path,'Modis_parquet_files\df_Modis_2020.parquet'))
+        df_Modis_2020.to_parquet(os.path.join(project_path, 'Modis_parquet_files\df_Modis_2020.parquet'))
 
         # Read all the LST parquet files from spesifice repocitiry into DataFrame
 
-        data_dir = Path(os.path.join(project_path,'Modis_parquet_files'))
+        data_dir = Path(os.path.join(project_path, 'Modis_parquet_files'))
         full_df_lst = pd.concat(
             pd.read_parquet(parquet_file)
             for parquet_file in data_dir.glob('*.parquet')
@@ -308,13 +307,13 @@ class DataPreprocessor:
         dfs_LST = []
 
         for st_id in list(full_df_lst.station_id.unique()):
-            #data = full_df_lst[full_df_lst['station_id'] == st_id]
-            #data = full_df_lst.loc[full_df_lst['station_id'] == st_id]
+            # data = full_df_lst[full_df_lst['station_id'] == st_id]
+            # data = full_df_lst.loc[full_df_lst['station_id'] == st_id]
             data = full_df_lst[full_df_lst['station_id'] == st_id].copy()
             data['time'] = pd.to_datetime(data['time'])
-            #data.loc[:, 'time'] = pd.to_datetime(data['time'])
+            # data.loc[:, 'time'] = pd.to_datetime(data['time'])
             data.set_index(data['time'], inplace=True)
-            data.drop(columns=['time'], inplace=True,errors='ignore')
+            data.drop(columns=['time'], inplace=True, errors='ignore')
             data = data.resample('H').mean().interpolate()
 
             data.reset_index(inplace=True)
@@ -324,7 +323,7 @@ class DataPreprocessor:
 
         # Import NDVI files for each station, which were extracted from Google Earth Engine code editor in davance
 
-        path = os.path.join(project_path,'NDVI_DATA_Interpolated')
+        path = os.path.join(project_path, 'NDVI_DATA_Interpolated')
         filenames = glob.glob(path + "/*.csv")
 
         dfs = []
@@ -343,7 +342,7 @@ class DataPreprocessor:
 
         # Reading IMS data parquet (above code block)
 
-        Full_DF_copy = pq.read_table(os.path.join(project_path,'all_stations_data_20152020.parquet'))
+        Full_DF_copy = pq.read_table(os.path.join(project_path, 'all_stations_data_20152020.parquet'))
         Full_DF_copy = Full_DF_copy.to_pandas()
         Full_DF_copy.drop(columns=['id', 'name'], inplace=True)
 
@@ -416,9 +415,7 @@ class DataPreprocessor:
         Join_ERA5_Matrix.drop(columns=['__xarray_dataarray_variable__',
                                        'index_right', 'Origin_Geo_poly', 'Centroid', 't2m_x',
                                        't2m_x', 't2m_y', 'ERA5_ind', 'Geometry_ERA5_Poly',
-                                       'Fixed_Temp','Correction_Matrix','Unnamed: 0'], inplace=True)
-
-
+                                       'Fixed_Temp', 'Correction_Matrix', 'Unnamed: 0'], inplace=True)
 
         # Build Fixed_T new feature based on mean topographice values in 9*9 and 1*1 pixels
 
@@ -426,7 +423,7 @@ class DataPreprocessor:
             'Topo_Mean_Diff'] = Join_ERA5_Matrix.mean_height_Modis_Pix - Join_ERA5_Matrix.mean_height_ERA5_Pix
 
         Correction_Matrix_Topo = 9.8 / 1000 * (
-                    Join_ERA5_Matrix['mean_height_Modis_Pix'] - Join_ERA5_Matrix['mean_height_ERA5_Pix'])
+                Join_ERA5_Matrix['mean_height_Modis_Pix'] - Join_ERA5_Matrix['mean_height_ERA5_Pix'])
 
         Join_ERA5_Matrix['Fixed_T'] = Join_ERA5_Matrix['t2m'] - Correction_Matrix_Topo
 
@@ -455,25 +452,20 @@ class DataPreprocessor:
         # turn datetime values into cyclical features (Sin/Cos)
         from feature_engine.creation import CyclicalFeatures
 
-
         X_time_vec = _Data_[['doy', 'hod']]
         cyclical = CyclicalFeatures(variables=None, drop_original=True)
         X_time_vec = cyclical.fit_transform(X_time_vec)
         _Data_ = pd.concat([_Data_, X_time_vec], axis=1)
         _Data_ = _Data_.drop(columns=['hod', 'doy'])
         _Data_.set_index(['datetime'], inplace=True)
+        _Data_.drop(columns=['geometry'],inplace=True)
+
+        if not is_hourly_data:
+            _Data_ = _Data_.groupby('stationId', group_keys=False).resample('1d').mean()
+            _Data_.dropna(how='any', inplace=True)
+            _Data_['stationId'] = _Data_['stationId'].astype(int)
+            _Data_.drop(columns=['hod_sin', 'hod_cos'], inplace=True)
+
         _Data_.dropna(how='any', inplace=True)
-        _Data_.rename(columns={'value': 'labels'},inplace=True)
-
-        return _Data_.drop(columns=['geometry','stationId']),_Data_.drop(columns=['geometry'])
-
-
-
-
-
-
-
-
-
-
-
+        _Data_.rename(columns={'value': 'labels'}, inplace=True)
+        return _Data_.drop(columns=['stationId']), _Data_

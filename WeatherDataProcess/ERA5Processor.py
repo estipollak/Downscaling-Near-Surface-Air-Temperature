@@ -13,10 +13,13 @@ from WeatherDataProcess.IWeatherDataProcessor import IWeatherDataProcessor
 
 
 @implementer(IWeatherDataProcessor)
-class ERA5HourlyProcessor:
-    def __init__(self):
+class ERA5Processor:
+    def __init__(self, is_hourly_data: bool):
         """
         Initializes the ERA5HourlyProcessor class.
+
+        Args:
+            is_hourly_data (bool): Indicates whether the data is in hourly or daily resolution.
         """
         # Initialize preprocessor, loader, and validators
         self.__data_preprocessor = DataPreprocessor()
@@ -24,24 +27,29 @@ class ERA5HourlyProcessor:
         self.__xgb_validator = XGBValidator()
         self.__nn_validator = ModelValidatorBase()
         # Prepare datasets for running and leave-one-group-out (LOGO) cross-validation
-        self.__dataset_for_run, self.__dataset_for_logo = self.__data_preparation()
+        self.__dataset_for_run, self.__dataset_for_logo = self.__data_preparation(is_hourly_data)
 
-    def __data_preparation(self) -> [pd.DataFrame, pd.DataFrame]:
+    def __data_preparation(self,  is_hourly_data: bool) -> [pd.DataFrame, pd.DataFrame]:
         """
         Prepares datasets for running and LOGO cross-validation.
+
+        Args:
+            is_hourly_data (bool): Indicates whether the calculations are on ERA5 daily/hourly data.
 
         Returns:
             [pd.DataFrame, pd.DataFrame]: Datasets for running and LOGO cross-validation.
         """
-        dataset_for_run, dataset_for_logo = self.__data_loader.preprocessing()
+        dataset_for_run, dataset_for_logo = self.__data_loader.preprocessing(is_hourly_data)
         return dataset_for_run, dataset_for_logo
 
     def run_xgb(self, output_path: str, is_best_params: bool = False) -> None:
         """
         Runs XGBoost model.
 
-        Args: output_path (str): Path to save output. is_best_params (bool, optional): Whether to use the
-        hyperparameter fine-tuning using GridSearchCV to find the best hyperparameters. Defaults to False.
+        Args:
+             output_path (str): Path to save output.
+             is_best_params (bool, optional): Whether to use the
+                hyperparameter fine-tuning using GridSearchCV to find the best hyperparameters. Defaults to False.
         """
         # Initialize XGBoost model
         xgb_model = XGBModel()
@@ -103,11 +111,12 @@ class ERA5HourlyProcessor:
         RMSE = self.__nn_validator.evaluate_RMSE(data_test, label_test, nn_model)
         print('NN - RMSE on test set is: ', RMSE)
 
-    def run_logo_nn(self, output_path: str) -> None:
+    def run_logo_nn(self, is_hourly_data: bool, output_path: str) -> None:
         """
         Runs Leave-One-Group-Out (LOGO) cross-validation for Neural Network (NN) model.
 
         Args:
+            is_hourly_data (bool): Indicates whether the calculations are on ERA5 daily/hourly data.
             output_path (str): Path to save output.
         """
 
@@ -126,17 +135,20 @@ class ERA5HourlyProcessor:
         # Calculate and plot graphs representing RMSE for each station, DOY, TOD, and WD.
         self.__nn_validator.RMSE_per_station(output_path, nn_prediction)
         self.__nn_validator.RMSE_per_doy(output_path, nn_prediction)
-        self.__nn_validator.RMSE_per_tod(output_path, nn_prediction)
+        # If the data is in hourly resolution, calculate the RMSE per time of day (TOD)
+        if is_hourly_data:
+            self.__nn_validator.RMSE_per_tod(output_path, nn_prediction)
         self.__nn_validator.RMSE_per_wd(output_path, nn_prediction, 1)
         # Calculate and print total RMSE for the entire cross-validation
         print('Total logo nn RMSE: ' + str(
             mean_squared_error(nn_prediction['labels'], nn_prediction['prediction'], squared=False)))
 
-    def run_logo_xgb(self, output_path: str) -> None:
+    def run_logo_xgb(self, is_hourly_data: bool, output_path: str) -> None:
         """
         Runs Leave-One-Group-Out (LOGO) cross-validation for XGBoost (XGB) model.
 
         Args:
+            is_hourly_data (bool): Indicates whether the calculations are on ERA5 daily/hourly data.
             output_path (str): Path to save output.
         """
         # Prepare dataset for LOGO cross-validation
@@ -155,7 +167,9 @@ class ERA5HourlyProcessor:
         # Calculate and plot graphs representing RMSE for each station, DOY, TOD, and WD.
         self.__xgb_validator.RMSE_per_station(output_path, xgb_prediction)
         self.__xgb_validator.RMSE_per_doy(output_path, xgb_prediction)
-        self.__xgb_validator.RMSE_per_tod(output_path, xgb_prediction)
+        # If the data is in hourly resolution, calculate the RMSE per time of day (TOD)
+        if is_hourly_data:
+            self.__xgb_validator.RMSE_per_tod(output_path, xgb_prediction)
         self.__xgb_validator.RMSE_per_wd(output_path, xgb_prediction, 1)
         # Calculate and print total RMSE for the entire cross-validation
         print('Total logo xgb RMSE: ' + str(

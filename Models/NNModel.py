@@ -52,7 +52,6 @@ class NNModel(ModelBase):
 
     def build_model(self) -> None:
         """Build the neural network model."""
-
         tf.random.set_seed(0)
 
         # Define model architecture
@@ -86,12 +85,16 @@ class NNModel(ModelBase):
             labels_train (np.ndarray): Training labels.
             early_stop (bool, optional): Whether to use early stopping during training. Defaults to False.
         """
+
+
+
         if early_stop:
             # Configure early stopping callback
             callback = tf.keras.callbacks.EarlyStopping(monitor='val_root_mean_squared_error',
-                                                        patience=2,
+                                                        patience=5,
                                                         restore_best_weights=True,
                                                         mode='auto')
+
             # Train the model with early stopping
             self.__nn_model.fit(
                 data_train,

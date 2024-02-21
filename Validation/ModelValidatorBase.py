@@ -137,8 +137,13 @@ class ModelValidatorBase:
         # Add a new column to your DataFrame with the wind direction range labels
         data_with_prediction_wd['wind_direction_range'] = pd.cut(data_with_prediction_wd['Wind_Direction'], bins=bins, labels=bins[:-1])
 
-        wind_RMSE = data_with_prediction_wd.groupby('wind_direction_range', observed=False).apply(
-            lambda g: mean_squared_error(g['labels'], g['prediction'], squared=False))
+        # Group by 'wind_direction_range'
+        # Define a lambda function to calculate RMSE if group size is greater than 1, otherwise return None
+        wind_RMSE = data_with_prediction_wd.groupby('wind_direction_range', observed=False).\
+            apply(lambda g: mean_squared_error(g['labels'], g['prediction'], squared=False) if len(g) > 1 else None)
+        # Drop rows with None values
+        wind_RMSE.dropna(inplace=True)
+
         wind_direction = wind_RMSE.index
 
         # Create a WindroseAxes instance
