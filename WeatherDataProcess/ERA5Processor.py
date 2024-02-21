@@ -4,7 +4,7 @@ from sklearn.metrics import mean_squared_error
 from zope.interface import implementer
 
 from LoadAndProcess.DataLoader import DataLoader
-from LoadAndProcess.DataPreprocessor import DataPreprocessor
+from LoadAndProcess.ERA5DataPreprocessor import ERA5DataPreprocessor
 from Models.NNModel import NNModel
 from Models.XGBModel import XGBModel
 from Validation.ModelValidatorBase import ModelValidatorBase
@@ -22,7 +22,7 @@ class ERA5Processor:
             is_hourly_data (bool): Indicates whether the data is in hourly or daily resolution.
         """
         # Initialize preprocessor, loader, and validators
-        self.__data_preprocessor = DataPreprocessor()
+        self.__data_preprocessor = ERA5DataPreprocessor()
         self.__data_loader = DataLoader(self.__data_preprocessor)
         self.__xgb_validator = XGBValidator()
         self.__nn_validator = ModelValidatorBase()

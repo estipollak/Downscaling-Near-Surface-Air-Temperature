@@ -14,10 +14,10 @@ from LoadAndProcess.IDataPreprocessor import IDataPreprocessor
 
 
 @implementer(IDataPreprocessor)
-class DataPreprocessor:
+class ERA5DataPreprocessor:
     def process(self, is_hourly_data: bool) -> [pd.DataFrame, pd.DataFrame]:
 
-        project_path = os.path.join(os.getcwd(), 'data\ERA5')
+        project_path = os.path.join(os.getcwd(), 'data/ERA5')
 
         # Import NetCDF ERA5 T2T 2015-2019 (5 years) 9*9 KM
         df13_2015_2019 = xr.open_dataset(os.path.join(project_path, '2015_2019.nc'))
@@ -250,43 +250,43 @@ class DataPreprocessor:
         df_Modis_2014 = Modis_2014.to_dataframe().reset_index()
         df_Modis_2014.rename(columns={'__xarray_dataarray_variable__': 'ContLST_Daily'}, inplace=True)
         df_Modis_2014 = df_Modis_2014[df_Modis_2014['band'] == 2]
-        df_Modis_2014.to_parquet(os.path.join(project_path, 'Modis_parquet_files\df_Modis_2014.parquet'))
+        df_Modis_2014.to_parquet(os.path.join(project_path, 'Modis_parquet_files/df_Modis_2014.parquet'))
 
         Modis_2015 = Modis_2015.sel(x=target_lon, y=target_lat, method='nearest')
         df_Modis_2015 = Modis_2015.to_dataframe().reset_index()
         df_Modis_2015.rename(columns={'__xarray_dataarray_variable__': 'ContLST_Daily'}, inplace=True)
         df_Modis_2015 = df_Modis_2015[df_Modis_2015['band'] == 2]
-        df_Modis_2015.to_parquet(os.path.join(project_path, 'Modis_parquet_files\df_Modis_2015.parquet'))
+        df_Modis_2015.to_parquet(os.path.join(project_path, 'Modis_parquet_files/df_Modis_2015.parquet'))
 
         Modis_2016 = Modis_2016.sel(x=target_lon, y=target_lat, method='nearest')
         df_Modis_2016 = Modis_2016.to_dataframe().reset_index()
         df_Modis_2016.rename(columns={'__xarray_dataarray_variable__': 'ContLST_Daily'}, inplace=True)
         df_Modis_2016 = df_Modis_2016[df_Modis_2016['band'] == 2]
-        df_Modis_2016.to_parquet(os.path.join(project_path, 'Modis_parquet_files\df_Modis_2016.parquet'))
+        df_Modis_2016.to_parquet(os.path.join(project_path, 'Modis_parquet_files/df_Modis_2016.parquet'))
 
         Modis_2017 = Modis_2017.sel(x=target_lon, y=target_lat, method='nearest')
         df_Modis_2017 = Modis_2017.to_dataframe().reset_index()
         df_Modis_2017.rename(columns={'__xarray_dataarray_variable__': 'ContLST_Daily'}, inplace=True)
         df_Modis_2017 = df_Modis_2017[df_Modis_2017['band'] == 2]
-        df_Modis_2017.to_parquet(os.path.join(project_path, 'Modis_parquet_files\df_Modis_2017.parquet'))
+        df_Modis_2017.to_parquet(os.path.join(project_path, 'Modis_parquet_files/df_Modis_2017.parquet'))
 
         Modis_2018 = Modis_2018.sel(x=target_lon, y=target_lat, method='nearest')
         df_Modis_2018 = Modis_2018.to_dataframe().reset_index()
         df_Modis_2018.rename(columns={'__xarray_dataarray_variable__': 'ContLST_Daily'}, inplace=True)
         df_Modis_2018 = df_Modis_2018[df_Modis_2018['band'] == 2]
-        df_Modis_2018.to_parquet(os.path.join(project_path, 'Modis_parquet_files\df_Modis_2018.parquet'))
+        df_Modis_2018.to_parquet(os.path.join(project_path, 'Modis_parquet_files/df_Modis_2018.parquet'))
 
         Modis_2019 = Modis_2019.sel(x=target_lon, y=target_lat, method='nearest')
         df_Modis_2019 = Modis_2019.to_dataframe().reset_index()
         df_Modis_2019.rename(columns={'__xarray_dataarray_variable__': 'ContLST_Daily'}, inplace=True)
         df_Modis_2019 = df_Modis_2019[df_Modis_2019['band'] == 2]
-        df_Modis_2019.to_parquet(os.path.join(project_path, 'Modis_parquet_files\df_Modis_2019.parquet'))
+        df_Modis_2019.to_parquet(os.path.join(project_path, 'Modis_parquet_files/df_Modis_2019.parquet'))
 
         Modis_2020 = Modis_2020.sel(x=target_lon, y=target_lat, method='nearest')
         df_Modis_2020 = Modis_2020.to_dataframe().reset_index()
         df_Modis_2020.rename(columns={'__xarray_dataarray_variable__': 'ContLST_Daily'}, inplace=True)
         df_Modis_2020 = df_Modis_2020[df_Modis_2020['band'] == 2]
-        df_Modis_2020.to_parquet(os.path.join(project_path, 'Modis_parquet_files\df_Modis_2020.parquet'))
+        df_Modis_2020.to_parquet(os.path.join(project_path, 'Modis_parquet_files/df_Modis_2020.parquet'))
 
         # Read all the LST parquet files from spesifice repocitiry into DataFrame
 
