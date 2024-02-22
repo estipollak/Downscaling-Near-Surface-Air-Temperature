@@ -1,7 +1,7 @@
 import glob
 import os
 from pathlib import Path
-
+from feature_engine.creation import CyclicalFeatures
 import geopandas as gpd
 import numpy as np
 import pandas as pd
@@ -450,7 +450,6 @@ class ERA5DataPreprocessor:
         _Data_.dropna(how='any', inplace=True)
 
         # turn datetime values into cyclical features (Sin/Cos)
-        from feature_engine.creation import CyclicalFeatures
 
         X_time_vec = _Data_[['doy', 'hod']]
         cyclical = CyclicalFeatures(variables=None, drop_original=True)

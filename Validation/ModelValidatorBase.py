@@ -26,6 +26,7 @@ class ModelValidatorBase:
     Attributes:
         None
     """
+
     def LOGO_cross_validation(self, data_frame: pd.DataFrame, model: IModel) -> pd.DataFrame:
         """
         Perform Leave-One-Group-Out (LOGO) cross-validation on the given data with the specified model.
@@ -46,7 +47,12 @@ class ModelValidatorBase:
         GRP = data_frame['stationId'].tolist()
         logo = LeaveOneGroupOut()
 
-        pred_list = []
+        # Create a copy of the original DataFrame
+        data_frame_with_prediction: pd.DataFrame = data_frame.copy()
+        # Add a new column named 'prediction' filled with None values
+        data_frame_with_prediction['prediction'] = None
+        # Get the index of the 'prediction' column in the DataFrame
+        col_index = data_frame_with_prediction.columns.get_loc('prediction')
 
         # Perform cross-validation
         for train_index, test_index in logo.split(data, labels, groups=GRP):
@@ -71,13 +77,10 @@ class ModelValidatorBase:
             # Evaluate predictions
             labels_pred_test = model.evaluate(data_test_scaled)
 
-            # Append predictions to the prediction list
-            pred_list += labels_pred_test.tolist()
+            # Append predictions to the data_frame_with_prediction dataFrame
+            data_frame_with_prediction.iloc[test_index,col_index] = labels_pred_test
 
-        # Add predictions to the DataFrame
-        data_frame_with_predection: pd.DataFrame = data_frame.copy()
-        data_frame_with_predection['prediction'] = pred_list
-        return data_frame_with_predection
+        return data_frame_with_prediction
 
     def RMSE_per_station(self, output_path: str, data_with_prediction: pd.DataFrame) -> None:
         """
@@ -101,7 +104,8 @@ class ModelValidatorBase:
         # Extract DOY (Day of Year) from the datetime column and new column.
         feature_name = 'DOY'
         data_with_doy = data_with_prediction.copy()
-        data_with_doy['DOY'] = data_with_prediction['datetime'].dt.day_of_year
+        if not feature_name in data_with_doy:
+            data_with_doy['DOY'] = data_with_prediction['datetime'].dt.day_of_year
         self.__RMSE_per_feature(output_path, data_with_doy, feature_name)
 
     def RMSE_per_tod(self, output_path: str, data_with_prediction: pd.DataFrame) -> None:
@@ -130,16 +134,18 @@ class ModelValidatorBase:
 
         # Preprocess wind direction data and calculate RMSE per wind direction
         data_with_prediction_wd = data_with_prediction.copy()
-        data_with_prediction_wd['Wind_Direction'] = data_with_prediction_wd['Wind_Direction'].apply(lambda x: x + 360 if x < 0 else x)
+        data_with_prediction_wd['Wind_Direction'] = data_with_prediction_wd['Wind_Direction'].apply(
+            lambda x: x + 360 if x < 0 else x)
 
         bins = list(range(0, 361, resolution))
 
         # Add a new column to your DataFrame with the wind direction range labels
-        data_with_prediction_wd['wind_direction_range'] = pd.cut(data_with_prediction_wd['Wind_Direction'], bins=bins, labels=bins[:-1])
+        data_with_prediction_wd['wind_direction_range'] = pd.cut(data_with_prediction_wd['Wind_Direction'], bins=bins,
+                                                                 labels=bins[:-1])
 
         # Group by 'wind_direction_range'
         # Define a lambda function to calculate RMSE if group size is greater than 1, otherwise return None
-        wind_RMSE = data_with_prediction_wd.groupby('wind_direction_range', observed=False).\
+        wind_RMSE = data_with_prediction_wd.groupby('wind_direction_range', observed=False). \
             apply(lambda g: mean_squared_error(g['labels'], g['prediction'], squared=False) if len(g) > 1 else None)
         # Drop rows with None values
         wind_RMSE.dropna(inplace=True)

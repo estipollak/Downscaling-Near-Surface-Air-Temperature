@@ -3,8 +3,8 @@ import pandas as pd
 from sklearn.metrics import mean_squared_error
 from zope.interface import implementer
 
+from LoadAndProcess.CIMP6DataPreprocessor import CIMP6DataPreprocessor
 from LoadAndProcess.DataLoader import DataLoader
-from LoadAndProcess.ERA5DataPreprocessor import ERA5DataPreprocessor
 from Models.NNModel import NNModel
 from Models.XGBModel import XGBModel
 from Validation.ModelValidatorBase import ModelValidatorBase
@@ -13,16 +13,16 @@ from WeatherDataProcess.IWeatherDataProcessor import IWeatherDataProcessor
 
 
 @implementer(IWeatherDataProcessor)
-class ERA5Processor:
+class CIMP6Processor:
     def __init__(self, is_hourly_data: bool):
         """
-        Initializes the ERA5Processor class.
+        Initializes the CIMP6Processor class.
 
         Args:
             is_hourly_data (bool): Indicates whether the data is in hourly or daily resolution.
         """
         # Initialize preprocessor, loader, and validators
-        self.__data_preprocessor = ERA5DataPreprocessor()
+        self.__data_preprocessor = CIMP6DataPreprocessor()
         self.__data_loader = DataLoader(self.__data_preprocessor)
         self.__xgb_validator = XGBValidator()
         self.__nn_validator = ModelValidatorBase()
@@ -57,7 +57,7 @@ class ERA5Processor:
         # Split data into train and test sets
         dataset_for_run: pd.DataFrame = self.__dataset_for_run.copy()
         X_Train, X_Test, Y_Train, Y_Test = self.__data_loader.split_data(dataset_for_run.drop(columns=['labels']),
-                                                                         dataset_for_run[['labels']], 0.3, 1)
+                                                                         dataset_for_run[['labels']], 0.2, 1)
         # Transform data
         data_train, data_test = xgb_model.data_transform(X_Train, X_Test)
         label_train, label_test = xgb_model.label_transform(Y_Train, Y_Test)
@@ -95,7 +95,7 @@ class ERA5Processor:
         # Split data into train and test sets
         dataset_for_run: pd.DataFrame = self.__dataset_for_run.copy()
         X_Train, X_Test, Y_Train, Y_Test = self.__data_loader.split_data(dataset_for_run.drop(columns=['labels']),
-                                                                         dataset_for_run[['labels']], 0.3, 1)
+                                                                         dataset_for_run[['labels']], 0.2, 1)
         # Transform data
         data_train, data_test = nn_model.data_transform(X_Train, X_Test)
         label_train, label_test = nn_model.label_transform(Y_Train, Y_Test)
@@ -132,13 +132,12 @@ class ERA5Processor:
                                                                                 nn_model_for_validation)
         nn_prediction.reset_index(inplace=True)
 
-        # Calculate and plot graphs representing RMSE for each station, DOY, TOD, and WD.
+        # Calculate and plot graphs representing RMSE for each station and DOY.
         self.__nn_validator.RMSE_per_station(output_path, nn_prediction)
         self.__nn_validator.RMSE_per_doy(output_path, nn_prediction)
         # If the data is in hourly resolution, calculate the RMSE per time of day (TOD)
         if is_hourly_data:
             self.__nn_validator.RMSE_per_tod(output_path, nn_prediction)
-        self.__nn_validator.RMSE_per_wd(output_path, nn_prediction, 1)
         # Calculate and print total RMSE for the entire cross-validation
         print('Total logo nn RMSE: ' + str(
             mean_squared_error(nn_prediction['labels'], nn_prediction['prediction'], squared=False)))
@@ -164,33 +163,12 @@ class ERA5Processor:
                                                                                   xgb_model_for_validation)
         xgb_prediction.reset_index(inplace=True)
 
-        # Calculate and plot graphs representing RMSE for each station, DOY, TOD, and WD.
+        # Calculate and plot graphs representing RMSE for each station and DOY.
         self.__xgb_validator.RMSE_per_station(output_path, xgb_prediction)
         self.__xgb_validator.RMSE_per_doy(output_path, xgb_prediction)
         # If the data is in hourly resolution, calculate the RMSE per time of day (TOD)
         if is_hourly_data:
             self.__xgb_validator.RMSE_per_tod(output_path, xgb_prediction)
-        self.__xgb_validator.RMSE_per_wd(output_path, xgb_prediction, 1)
         # Calculate and print total RMSE for the entire cross-validation
         print('Total logo xgb RMSE: ' + str(
             mean_squared_error(xgb_prediction['labels'], xgb_prediction['prediction'], squared=False)))
-
-    def print_result_of_reference(self) -> None:
-        """
-        Prints the RMSE of the reference dataset before any processing.
-
-        This method calculates and prints the RMSE between the labels and the reference temperature
-        values (T2M and T2M cor) in the reference dataset. It helps provide a baseline understanding
-        of the dataset's initial error distribution before applying any processing or model training.
-
-        Returns:
-            None
-        """
-        # Calculate RMSE for T2M and T2M cor in the reference dataset
-        t2m_RMSE = mean_squared_error(self.__dataset_for_run['labels'], self.__dataset_for_run['t2m'], squared=False)
-        t2m_cor_RMSE = mean_squared_error(self.__dataset_for_run['labels'], self.__dataset_for_run['Fixed_T'],
-                                          squared=False)
-
-        # Print RMSE values
-        print('T2M RMSE: ', t2m_RMSE)
-        print('T2M cor RMSE: ', t2m_cor_RMSE)

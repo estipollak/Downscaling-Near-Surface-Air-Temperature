@@ -1,5 +1,6 @@
 import os
 from ProjectEnums import PossibleActions
+from WeatherDataProcess.CIMP6Processor import CIMP6Processor
 from WeatherDataProcess.ERA5Processor import ERA5Processor
 
 
@@ -68,6 +69,10 @@ def run_requested_action(requested_action: PossibleActions):
     Parameters:
         requested_action (PossibleActions): The requested action.
     """
+
+    # Create an output path based on the requested action
+    output_path = create_output_path(requested_action)
+
     # Check if the requested action involves ERA5 data processing
     if is_ERA5(requested_action):
 
@@ -76,9 +81,6 @@ def run_requested_action(requested_action: PossibleActions):
 
         # Initialize an ERA5Processor instance based on the data resolution
         ERA5_processor = ERA5Processor(is_hourly_data)
-
-        # Create an output path based on the requested action
-        output_path = create_output_path(requested_action)
 
         # Print the result of the reference
         ERA5_processor.print_result_of_reference()
@@ -101,6 +103,30 @@ def run_requested_action(requested_action: PossibleActions):
             # Run neural network model training with LOGO cross-validation
             ERA5_processor.run_logo_nn(is_hourly_data, output_path)
 
+    # The requested action involves CIMP6 data processing
+    else:
+        # Initialize an ERA5Processor instance based on the data resolution
+        CIMP6_processor = CIMP6Processor(False)
+
+        # Execute the appropriate action based on the requested action
+
+        if requested_action == PossibleActions.CIMP6_Daily_XGB_RUN:
+            # Run XGB model training
+            CIMP6_processor.run_xgb(output_path)
+
+        elif requested_action == PossibleActions.CIMP6_Daily_XGB_LOGO:
+            # Run XGB model training with LOGO cross-validation
+            CIMP6_processor.run_logo_xgb(False, output_path)
+
+        elif requested_action == PossibleActions.CIMP6_Daily_NN_RUN:
+            # Run neural network model training
+            CIMP6_processor.run_nn()
+
+        elif requested_action == PossibleActions.CIMP6_Daily_NN_LOGO:
+            # Run neural network model training with LOGO cross-validation
+            CIMP6_processor.run_logo_nn(False, output_path)
+
+
 
 def main():
     """
@@ -115,10 +141,14 @@ def main():
         "Enter 5 for ERA5_Daily_XGB_LOGO \n"
         "Enter 6 for ERA5_Daily_NN_RUN \n"
         "Enter 7 for ERA5_Daily_NN_LOGO \n"
+        "Enter 8 for CIMP6_Daily_XGB_RUN \n"
+        "Enter 9 for CIMP6_Daily_XGB_LOGO \n"
+        "Enter 10 for CIMP6_Daily_NN_RUN \n"
+        "Enter 11 for CIMP6_Daily_NN_LOGO \n"
     )
 
     number = int(input())
-    if number < 0 or number > 7:
+    if number < 0 or number > 11:
         print('Invalid input')
         return
     requested_action = list(PossibleActions)[number]
