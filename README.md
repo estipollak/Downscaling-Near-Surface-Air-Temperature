@@ -74,4 +74,4 @@ In the `Output` folder of this repository, you can find example results generate
 For more details, please refer to the article https://www.mdpi.com/2072-4292/16/8/1314:
 
 If you find this code useful for your research, please use the following citation:
-Blizer, Amit, Oren Glickman, and Itamar M. Lensky. 2024. "Comparing ML Methods for Downscaling Near-Surface Air Temperature over the Eastern Mediterranean" Remote Sensing 16, no. 8: 1314. https://doi.org/10.3390/rs16081314
+Blizer Amit, Oren Glickman, and Itamar M. Lensky. 2024. "Comparing ML Methods for Downscaling Near-Surface Air Temperature over the Eastern Mediterranean" Remote Sensing 16, no. 8: 1314. https://doi.org/10.3390/rs16081314
